@@ -1,0 +1,110 @@
+import React, { useRef, useState } from 'react';
+import { UploadCloud, Search, Eye } from 'lucide-react';
+
+const sampleCandidates = [
+  {
+    id: 1,
+    name: 'Ava Thompson',
+    role: 'Senior Frontend Engineer',
+    location: 'Remote • US',
+    skills: ['React', 'TypeScript', 'Tailwind', 'GraphQL'],
+    avatar: 'https://i.pravatar.cc/120?img=1',
+  },
+  {
+    id: 2,
+    name: 'Noah Patel',
+    role: 'Machine Learning Engineer',
+    location: 'San Francisco, CA',
+    skills: ['Python', 'PyTorch', 'NLP', 'MLOps'],
+    avatar: 'https://i.pravatar.cc/120?img=2',
+  },
+  {
+    id: 3,
+    name: 'Mia Rodriguez',
+    role: 'Product Designer',
+    location: 'New York, NY',
+    skills: ['Figma', 'Prototyping', 'Design Systems', 'UX Research'],
+    avatar: 'https://i.pravatar.cc/120?img=3',
+  },
+  {
+    id: 4,
+    name: 'Liam Chen',
+    role: 'Backend Engineer',
+    location: 'Remote • APAC',
+    skills: ['Go', 'PostgreSQL', 'gRPC', 'AWS'],
+    avatar: 'https://i.pravatar.cc/120?img=4',
+  },
+];
+
+export default function TalentGrid({ onViewProfile }) {
+  const fileInputRef = useRef(null);
+  const [query, setQuery] = useState('');
+
+  const handleUploadClick = () => fileInputRef.current?.click();
+
+  const filtered = sampleCandidates.filter(
+    (c) =>
+      c.name.toLowerCase().includes(query.toLowerCase()) ||
+      c.role.toLowerCase().includes(query.toLowerCase()) ||
+      c.skills.some((s) => s.toLowerCase().includes(query.toLowerCase()))
+  );
+
+  return (
+    <section id="talent" className="relative mx-auto mt-12 max-w-6xl px-6">
+      <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Hire Talent</h2>
+        <div className="flex w-full max-w-xl items-center gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search by name, role, or skill..."
+              className="w-full rounded-md border border-black/10 bg-white/70 py-2 pl-9 pr-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-violet-400 focus:outline-none focus:ring-2 focus:ring-violet-200 dark:border-white/10 dark:bg-white/10 dark:text-white dark:placeholder:text-white/50 dark:focus:border-violet-500 dark:focus:ring-violet-500/20"
+            />
+          </div>
+          <input ref={fileInputRef} type="file" multiple accept=".pdf,.doc,.docx" className="hidden" />
+          <button
+            onClick={handleUploadClick}
+            className="inline-flex items-center gap-2 rounded-md bg-violet-600 px-3 py-2 text-sm font-semibold text-white shadow shadow-violet-600/30 transition hover:bg-violet-500"
+          >
+            <UploadCloud size={18} /> Upload Resumes
+          </button>
+        </div>
+      </div>
+
+      <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {filtered.map((c) => (
+          <article
+            key={c.id}
+            className="group rounded-lg border border-black/10 bg-white/70 p-4 transition hover:shadow-lg dark:border-white/10 dark:bg-white/5"
+          >
+            <div className="flex items-center gap-3">
+              <img src={c.avatar} alt={c.name} className="h-12 w-12 rounded-full ring-2 ring-violet-500/30" />
+              <div>
+                <h3 className="text-base font-semibold text-gray-900 dark:text-white">{c.name}</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-300">{c.role}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">{c.location}</p>
+              </div>
+            </div>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {c.skills.map((s) => (
+                <span key={s} className="rounded-full border border-violet-500/30 bg-violet-500/10 px-2 py-1 text-xs text-violet-600 dark:text-violet-300">
+                  {s}
+                </span>
+              ))}
+            </div>
+            <div className="mt-4 flex items-center justify-end">
+              <button
+                onClick={() => onViewProfile(c)}
+                className="inline-flex items-center gap-2 rounded-md border border-violet-500/30 bg-white/50 px-3 py-2 text-sm font-semibold text-violet-700 transition hover:bg-violet-50 dark:bg-white/5 dark:text-violet-300 dark:hover:bg-white/10"
+              >
+                <Eye size={16} /> View Profile
+              </button>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
